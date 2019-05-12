@@ -28,23 +28,24 @@ class Mscoco(data.Dataset):
         self.rot_factor = rot_factor
         self.label_type = label_type
 
-        self.nJoints_coco = 17
+        #self.nJoints_coco = 17
         self.nJoints = 17
 
-        self.accIdxs = (1, 2, 3, 4, 5, 6, 7, 8,
-                        9, 10, 11, 12, 13, 14, 15, 16, 17)
+        #self.accIdxs = (1, 2, 3, 4, 5, 6, 7, 8,
+        #                9, 10, 11, 12, 13, 14, 15, 16, 17)
+        self.accIdxs = range(1, self.nJoints+1)
         self.flipRef = ((2, 3), (4, 5), (6, 7),
                         (8, 9), (10, 11), (12, 13),
                         (14, 15), (16, 17))
 
         # Load from coco
-        coco_train = COCO("../data/coco/person_keypoints_train2017.json")
+        coco = COCO("../data/coco/person_keypoints_train2017.json")
         self.imgname_coco_train = []
         self.bndbox_coco_train = []
         self.part_coco_train = []
-        for ann in coco_train.dataset["annotations"]:
-            img = coco_train.imgs[ann["image_id"]][:,:2]
-            kps = np.reshape(ann["keypoints"], (-1,3))
+        for ann in coco.dataset["annotations"]:
+            img = coco.imgs[ann["image_id"]]
+            kps = np.reshape(ann["keypoints"], (-1,3))[:,:2]
             self.imgname_coco_train.append(img["file_name"])
             self.bndbox_coco_train.append(ann["bbox"])
             self.part_coco_train.append(kps)
@@ -59,8 +60,8 @@ class Mscoco(data.Dataset):
             self.bndbox_coco_val.append(ann["bbox"])
             self.part_coco_val.append(kps)
 
-        self.size_train = self.imgname_coco_train.shape[0]
-        self.size_val = self.imgname_coco_val.shape[0]
+        self.size_train = len(self.imgname_coco_train)
+        self.size_val = len(self.imgname_coco_val)
 
     def __getitem__(self, index):
         sf = self.scale_factor

@@ -65,9 +65,6 @@ class Mscoco(data.Dataset):
                          map(lambda x: chr(int(x)), imgname))
         img_path = os.path.join(self.img_folder, imgname)
 
-
-        print(img_path, part, bndbox)
-
         metaData = generateSampleBox(img_path, bndbox, part, self.nJoints,
                                      'coco', sf, self, train=self.is_train)
 

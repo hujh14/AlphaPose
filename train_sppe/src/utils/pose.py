@@ -26,8 +26,8 @@ def generateSampleBox(img_path, bndbox, part, nJoints, imgset, scale_factor, dat
     img[1].add_(-0.457)
     img[2].add_(-0.480)
 
-    upLeft = torch.Tensor((int(bndbox[0][0]), int(bndbox[0][1])))
-    bottomRight = torch.Tensor((int(bndbox[0][2]), int(bndbox[0][3])))
+    upLeft = torch.Tensor((int(bndbox[0]), int(bndbox[1])))
+    bottomRight = torch.Tensor((int(bndbox[2]), int(bndbox[3])))
     ht = bottomRight[1] - upLeft[1]
     width = bottomRight[0] - upLeft[0]
     imght = img.shape[1]
