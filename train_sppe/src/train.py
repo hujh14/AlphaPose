@@ -5,7 +5,7 @@
 
 import torch
 import torch.utils.data
-from utils.dataset import coco
+from utils.dataset import coco, apollo
 from opt import opt
 from tqdm import tqdm
 from models.FastPose import createModel
@@ -150,6 +150,9 @@ def main():
     if opt.dataset == 'coco':
         train_dataset = coco.Mscoco(train=True)
         val_dataset = coco.Mscoco(train=False)
+    if opt.dataset == 'apollo':
+        train_dataset = apollo.Mscoco(train=True)
+        val_dataset = apollo.Mscoco(train=False)
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=opt.trainBatch, shuffle=True, num_workers=opt.nThreads, pin_memory=True)
