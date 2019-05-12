@@ -5,14 +5,12 @@
 
 import os
 import h5py
-import numpy as np
 from functools import reduce
 
 import torch.utils.data as data
 from ..pose import generateSampleBox
 from opt import opt
 
-from pycocotools.coco import COCO
 
 class Mscoco(data.Dataset):
     def __init__(self, train=True, sigma=1,
@@ -37,27 +35,16 @@ class Mscoco(data.Dataset):
                         (8, 9), (10, 11), (12, 13),
                         (14, 15), (16, 17))
 
-        # Load from coco
-        coco_train = COCO("../data/coco/person_keypoints_train2017.json")
-        self.imgname_coco_train = []
-        self.bndbox_coco_train = []
-        self.part_coco_train = []
-        for ann in coco_train.dataset["annotations"]:
-            img = coco_train.imgs[ann["image_id"]][:,:2]
-            kps = np.reshape(ann["keypoints"], (-1,3))
-            self.imgname_coco_train.append(img["file_name"])
-            self.bndbox_coco_train.append(ann["bbox"])
-            self.part_coco_train.append(kps)
-        coco = COCO("../data/coco/person_keypoints_val2017.json")
-        self.imgname_coco_val = []
-        self.bndbox_coco_val = []
-        self.part_coco_val = []
-        for ann in coco.dataset["annotations"]:
-            img = coco.imgs[ann["image_id"]]
-            kps = np.reshape(ann["keypoints"], (-1,3))[:,:2]
-            self.imgname_coco_val.append(img["file_name"])
-            self.bndbox_coco_val.append(ann["bbox"])
-            self.part_coco_val.append(kps)
+        # create train/val split
+        with h5py.File('../data/coco/annot_coco.h5', 'r') as annot:
+            # train
+            self.imgname_coco_train = annot['imgname'][:-5887]
+            self.bndbox_coco_train = annot['bndbox'][:-5887]
+            self.part_coco_train = annot['part'][:-5887]
+            # val
+            self.imgname_coco_val = annot['imgname'][-5887:]
+            self.bndbox_coco_val = annot['bndbox'][-5887:]
+            self.part_coco_val = annot['part'][-5887:]
 
         self.size_train = self.imgname_coco_train.shape[0]
         self.size_val = self.imgname_coco_val.shape[0]
@@ -74,7 +61,12 @@ class Mscoco(data.Dataset):
             bndbox = self.bndbox_coco_val[index]
             imgname = self.imgname_coco_val[index]
 
+        imgname = reduce(lambda x, y: x + y,
+                         map(lambda x: chr(int(x)), imgname))
         img_path = os.path.join(self.img_folder, imgname)
+
+
+        print(img_path, part, bndbox)
 
         metaData = generateSampleBox(img_path, bndbox, part, self.nJoints,
                                      'coco', sf, self, train=self.is_train)

@@ -8,7 +8,7 @@ PoseFlow/alpha-pose-results-val.json
 PoseFlow/test-predict
 PoseFlow/val-predict
 train_sppe/coco-minival500_images.txt
-train_sppe/person_keypoints_val2014.json
+train_sppe/data/*
 
 ssd/examples
 images
