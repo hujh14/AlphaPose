@@ -215,7 +215,7 @@ def transformBoxInvert(pt, ul, br, inpH, inpW, resH, resW):
     new_point[1] = _pt[1] + ul[1]
     return new_point
 
-
+N = 66
 def transformBoxInvert_batch(pt, ul, br, inpH, inpW, resH, resW):
     '''
     pt:     [n, 17, 2]
@@ -231,14 +231,14 @@ def transformBoxInvert_batch(pt, ul, br, inpH, inpW, resH, resW):
     lenW = lenH * (inpW / inpH)
 
     _pt = (pt * lenH[:, np.newaxis, np.newaxis]) / resH
-    _pt[:, :, 0] = _pt[:, :, 0] - ((lenW[:, np.newaxis].repeat(1, 17) - 1) /
-                                   2 - center[:, 0].unsqueeze(-1).repeat(1, 17)).clamp(min=0)
-    _pt[:, :, 1] = _pt[:, :, 1] - ((lenH[:, np.newaxis].repeat(1, 17) - 1) /
-                                   2 - center[:, 1].unsqueeze(-1).repeat(1, 17)).clamp(min=0)
+    _pt[:, :, 0] = _pt[:, :, 0] - ((lenW[:, np.newaxis].repeat(1, N) - 1) /
+                                   2 - center[:, 0].unsqueeze(-1).repeat(1, N)).clamp(min=0)
+    _pt[:, :, 1] = _pt[:, :, 1] - ((lenH[:, np.newaxis].repeat(1, N) - 1) /
+                                   2 - center[:, 1].unsqueeze(-1).repeat(1, N)).clamp(min=0)
 
     new_point = torch.zeros(pt.size())
-    new_point[:, :, 0] = _pt[:, :, 0] + ul[:, 0].unsqueeze(-1).repeat(1, 17)
-    new_point[:, :, 1] = _pt[:, :, 1] + ul[:, 1].unsqueeze(-1).repeat(1, 17)
+    new_point[:, :, 0] = _pt[:, :, 0] + ul[:, 0].unsqueeze(-1).repeat(1, N)
+    new_point[:, :, 1] = _pt[:, :, 1] + ul[:, 1].unsqueeze(-1).repeat(1, N)
     return new_point
 
 
@@ -405,7 +405,7 @@ def drawCOCO(inps, preds, scores):
     plt.imshow(imgs[0])
     ax = fig.add_subplot(1, 1, 1)
     #print(preds.shape)
-    for p in range(17):
+    for p in range(N):
         if scores[0][p][0] < 0.2:
             continue
         x, y = preds[0][p]

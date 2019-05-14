@@ -7,6 +7,7 @@ import numpy as np
 from SPPE.src.utils.img import flip, shuffleLR
 from SPPE.src.utils.eval import getPrediction
 from SPPE.src.models.FastPose import createModel
+from opt import opt
 
 import visdom
 import time
@@ -29,7 +30,7 @@ class InferenNet(nn.Module):
         super(InferenNet, self).__init__()
 
         model = createModel().cuda()
-        model_path = './models/sppe/model_49.pkl'
+        model_path = './models/sppe/model_22.pkl'
         #model_path = './models/sppe/duc_se.pth'
         print('Loading pose model from {}'.format(model_path))
         sys.stdout.flush()
@@ -45,10 +46,10 @@ class InferenNet(nn.Module):
 
     def forward(self, x):
         out = self.pyranet(x)
-        out = out.narrow(1, 0, 17)
+        out = out.narrow(1, 0, opt.nClasses)
 
         flip_out = self.pyranet(flip(x))
-        flip_out = flip_out.narrow(1, 0, 17)
+        flip_out = flip_out.narrow(1, 0, opt.nClasses)
 
         flip_out = flip(shuffleLR(
             flip_out, self.dataset))
@@ -63,7 +64,7 @@ class InferenNet_fast(nn.Module):
         super(InferenNet_fast, self).__init__()
 
         model = createModel().cuda()
-        model_path = './models/sppe/model_18.pkl'
+        model_path = './models/sppe/model_22.pkl'
         #model_path = './models/sppe/duc_se.pth'
         print('Loading pose model from {}'.format(model_path))
 
@@ -78,6 +79,6 @@ class InferenNet_fast(nn.Module):
 
     def forward(self, x):
         out = self.pyranet(x)
-        out = out.narrow(1, 0, 17)
+        out = out.narrow(1, 0, opt.nClasses)
 
         return out

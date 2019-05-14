@@ -162,7 +162,7 @@ def write_results(prediction, confidence, num_classes, nms=True, nms_conf=0.4):
         #WE will do NMS classwise
         #print(img_classes)
         for cls in img_classes:
-            if cls != 0:
+            if cls != 2: # Select one class we want. Humans(0) or cars(2) 
                 continue
             #get the detections with one particular class
             cls_mask = image_pred_*(image_pred_[:,-1] == cls).float().unsqueeze(1)
