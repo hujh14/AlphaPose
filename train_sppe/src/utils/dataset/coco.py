@@ -45,9 +45,11 @@ class Mscoco(data.Dataset):
         self.part_coco_train = []
         for ann in coco.dataset["annotations"]:
             img = coco.imgs[ann["image_id"]]
+            bbox = ann["bbox"]
+            bndbox = [bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]
             kps = np.reshape(ann["keypoints"], (-1,3))[:,:2]
             self.imgname_coco_train.append(img["file_name"])
-            self.bndbox_coco_train.append(ann["bbox"])
+            self.bndbox_coco_train.append(bndbox)
             self.part_coco_train.append(kps)
         coco = COCO("../data/coco/person_keypoints_val2017.json")
         self.imgname_coco_val = []
@@ -55,9 +57,11 @@ class Mscoco(data.Dataset):
         self.part_coco_val = []
         for ann in coco.dataset["annotations"]:
             img = coco.imgs[ann["image_id"]]
+            bbox = ann["bbox"]
+            bndbox = [bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]
             kps = np.reshape(ann["keypoints"], (-1,3))[:,:2]
             self.imgname_coco_val.append(img["file_name"])
-            self.bndbox_coco_val.append(ann["bbox"])
+            self.bndbox_coco_val.append(bndbox)
             self.part_coco_val.append(kps)
 
         self.size_train = len(self.imgname_coco_train)

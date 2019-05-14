@@ -30,9 +30,7 @@ class Mscoco(data.Dataset):
 
         self.nJoints = 66
         self.accIdxs = range(1, self.nJoints+1)
-        self.flipRef = ((2, 3), (4, 5), (6, 7),
-                        (8, 9), (10, 11), (12, 13),
-                        (14, 15), (16, 17))
+        self.flipRef = [[1, 58], [2, 57], [3, 56], [4, 55], [5, 54], [6, 53], [7, 52], [8, 51], [9, 50], [10, 49], [11, 48], [12, 47], [13, 46], [14, 45], [15, 44], [16, 43], [17, 42], [18, 41], [19, 40], [20, 39], [21, 38], [22, 37], [23, 36], [24, 35], [25, 34], [26, 33], [27, 32], [28, 31], [29, 30], [65, 66], [59, 60], [61, 62], [63, 64]]
 
         # Load from coco
         coco = COCO("../data/apollo/car_keypoints_train.json")
@@ -41,9 +39,11 @@ class Mscoco(data.Dataset):
         self.part_coco_train = []
         for ann in coco.dataset["annotations"]:
             img = coco.imgs[ann["image_id"]]
+            bbox = ann["bbox"]
+            bndbox = [bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]
             kps = np.reshape(ann["keypoints"], (-1,3))[:,:2]
             self.imgname_coco_train.append(img["file_name"])
-            self.bndbox_coco_train.append(ann["bbox"])
+            self.bndbox_coco_train.append(bndbox)
             self.part_coco_train.append(kps)
         coco = COCO("../data/apollo/car_keypoints_val.json")
         self.imgname_coco_val = []
@@ -51,9 +51,11 @@ class Mscoco(data.Dataset):
         self.part_coco_val = []
         for ann in coco.dataset["annotations"]:
             img = coco.imgs[ann["image_id"]]
+            bbox = ann["bbox"]
+            bndbox = [bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]
             kps = np.reshape(ann["keypoints"], (-1,3))[:,:2]
             self.imgname_coco_val.append(img["file_name"])
-            self.bndbox_coco_val.append(ann["bbox"])
+            self.bndbox_coco_val.append(bndbox)
             self.part_coco_val.append(kps)
 
         self.size_train = len(self.imgname_coco_train)

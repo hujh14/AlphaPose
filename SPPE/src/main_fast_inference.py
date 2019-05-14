@@ -29,9 +29,15 @@ class InferenNet(nn.Module):
         super(InferenNet, self).__init__()
 
         model = createModel().cuda()
-        print('Loading pose model from {}'.format('./models/sppe/duc_se.pth'))
+        model_path = './models/sppe/model_49.pkl'
+        #model_path = './models/sppe/duc_se.pth'
+        print('Loading pose model from {}'.format(model_path))
         sys.stdout.flush()
-        model.load_state_dict(torch.load('./models/sppe/duc_se.pth'))
+        
+        print("Filtering state dict")
+        state_dict = torch.load(model_path)
+        state_dict = {k: v for k, v in state_dict.items() if k in model.state_dict()}
+        model.load_state_dict(state_dict)
         model.eval()
         self.pyranet = model
 
@@ -57,8 +63,14 @@ class InferenNet_fast(nn.Module):
         super(InferenNet_fast, self).__init__()
 
         model = createModel().cuda()
-        print('Loading pose model from {}'.format('./models/sppe/duc_se.pth'))
-        model.load_state_dict(torch.load('./models/sppe/duc_se.pth'))
+        model_path = './models/sppe/model_18.pkl'
+        #model_path = './models/sppe/duc_se.pth'
+        print('Loading pose model from {}'.format(model_path))
+
+        print("Filtering state dict")
+        state_dict = torch.load(model_path)
+        state_dict = {k: v for k, v in state_dict.items() if k in model.state_dict()}
+        model.load_state_dict(state_dict)
         model.eval()
         self.pyranet = model
 

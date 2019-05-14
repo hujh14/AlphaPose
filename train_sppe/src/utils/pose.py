@@ -72,11 +72,10 @@ def generateSampleBox(img_path, bndbox, part, nJoints, imgset, scale_factor, dat
 
     # Counting Joints number
     jointNum = 0
-    if imgset == 'coco':
-        for i in range(17):
-            if part[i][0] > 0 and part[i][0] > upLeft[0] and part[i][1] > upLeft[1] \
-               and part[i][0] < bottomRight[0] and part[i][1] < bottomRight[1]:
-                jointNum += 1
+    for i in range(nJoints):
+        if part[i][0] > 0 and part[i][0] > upLeft[0] and part[i][1] > upLeft[1] \
+           and part[i][0] < bottomRight[0] and part[i][1] < bottomRight[1]:
+            jointNum += 1
 
     # Doing Random Crop
     if opt.addDPG:
@@ -114,16 +113,15 @@ def generateSampleBox(img_path, bndbox, part, nJoints, imgset, scale_factor, dat
     out = torch.zeros(nJoints, outputResH, outputResW)
     setMask = torch.zeros(nJoints, outputResH, outputResW)
     # Draw Label
-    if imgset == 'coco':
-        for i in range(nJoints_coco):
-            if part[i][0] > 0 and part[i][0] > upLeft[0] and part[i][1] > upLeft[1] \
-               and part[i][0] < bottomRight[0] and part[i][1] < bottomRight[1]:
-                hm_part = transformBox(
-                    part[i], upLeft, bottomRight, inputResH, inputResW, outputResH, outputResW)
+    for i in range(nJoints):
+        if part[i][0] > 0 and part[i][0] > upLeft[0] and part[i][1] > upLeft[1] \
+           and part[i][0] < bottomRight[0] and part[i][1] < bottomRight[1]:
+            hm_part = transformBox(
+                part[i], upLeft, bottomRight, inputResH, inputResW, outputResH, outputResW)
 
-                out[i] = drawGaussian(out[i], hm_part, opt.hmGauss)
+            out[i] = drawGaussian(out[i], hm_part, opt.hmGauss)
 
-            setMask[i].add_(1)
+        setMask[i].add_(1)
 
     if train:
         # Flip
